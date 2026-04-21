@@ -1,0 +1,104 @@
+<!-- ══ PANEL INSIGHTS ══════════════════════════════════════
+     Partial HTML da inserire in index.html dopo #panel-nota.
+     Richiede: insights.js, Chart.js (già caricato via cdnjs).
+     Legge dati da RAW (già in memoria, zero fetch aggiuntivi).
+═══════════════════════════════════════════════════════════ -->
+<div id="panel-insights" class="content" style="display:none;animation:fu .18s ease both">
+  <div class="card">
+
+    <!-- HEADER + FILTRI -->
+    <div class="ch" style="flex-wrap:wrap;gap:10px">
+      <div>
+        <div class="ct" id="ins-card-title">AI Chatbot</div>
+        <div class="csub" id="ins-card-sub">Caricamento in corso…</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="fg">
+          <div class="fl">Mese</div>
+          <select id="ins-f-mese" class="fsel" onchange="insightsOnMeseChange()"></select>
+        </div>
+        <div class="fg">
+          <div class="fl">Chatbot</div>
+          <select id="ins-f-llm" class="fsel" onchange="insightsOnLlmChange()">
+            <option value="Total">Total — aggregato tutti</option>
+            <option value="OPENAI CHATGPT">ChatGPT</option>
+            <option value="PERPLEXITY">Perplexity ⚠</option>
+            <option value="GOOGLE GEMINI">Gemini ⚠</option>
+            <option value="MICROSOFT COPILOT">Copilot ⚠</option>
+            <option value="X GROK">Grok ⚠</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div style="padding:14px 18px 0">
+      <div id="ins-kpi-container" class="ins-kpi-row"></div>
+    </div>
+
+    <!-- CHART ROW: top domini + stacked incremental reach -->
+    <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+      <!-- Chart 1: Top siti per AI Visitors -->
+      <div class="card" style="border:0.5px solid var(--border)">
+        <div class="ch" style="border-bottom:0.5px solid var(--border)">
+          <div>
+            <div class="ct">Top siti per AI Visitors</div>
+            <div class="csub" id="ins-chart1-sub"></div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 16px">
+          <div style="position:relative;width:100%;height:340px">
+            <canvas id="ins-chart1"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart 2: Domain Visitors + Non Visitors (stacked) -->
+      <div class="card" style="border:0.5px solid var(--border)">
+        <div class="ch" style="border-bottom:0.5px solid var(--border)">
+          <div>
+            <div class="ct">Total New Reach per dominio</div>
+            <div class="csub" id="ins-chart2-sub"></div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 16px">
+          <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)">
+              <span style="width:9px;height:9px;border-radius:2px;background:#534AB7;display:inline-block"></span>
+              Domain Visitors
+            </span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)">
+              <span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block"></span>
+              Non Visitors
+            </span>
+          </div>
+          <div style="position:relative;width:100%;height:300px">
+            <canvas id="ins-chart2"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chart 3: AI Visitors per mese (grouped bar — mesi dinamici) -->
+    <div style="padding:0 18px 18px">
+      <div class="card" style="border:0.5px solid var(--border)">
+        <div class="ch" style="border-bottom:0.5px solid var(--border)">
+          <div>
+            <div class="ct">AI Visitors · evoluzione mensile</div>
+            <div class="csub" id="ins-chart3-sub"></div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 16px">
+          <div id="ins-chart3-legend" style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap"></div>
+          <div style="position:relative;width:100%;height:220px">
+            <canvas id="ins-chart3"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- /panel-insights -->

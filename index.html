@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Intelligence — Sensemakers × Comscore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:#F7F7FB;--surface:#FFFFFF;--surface2:#F2F2F7;--surface3:#E8E8F0;
+  --border:rgba(50,0,250,0.08);--border2:rgba(50,0,250,0.15);
+  --text:#0D0D1E;--text2:#4A4A6A;--text3:#8888A8;--text4:#B8B8CC;
+  --accent:#3200FA;--accent-bg:rgba(50,0,250,0.07);--accent-border:rgba(50,0,250,0.18);
+  --green:#00875A;--green-bg:rgba(0,135,90,0.08);--green-border:rgba(0,135,90,0.20);
+  --amber:#B45309;--amber-bg:rgba(180,83,9,0.08);--amber-border:rgba(180,83,9,0.20);
+  --red:#C4390A;--domain-it:#3200FA;--domain-int:#64748B;
+  --shadow:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(50,0,250,0.06);
+  --shadow-lg:0 8px 32px rgba(50,0,250,0.10);--r:14px;--tr:0.16s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="dark"] {
+  --bg:#08081A;--surface:#10101F;--surface2:#181828;--surface3:#222235;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#F0F0FA;--text2:#9090B8;--text3:#5A5A78;--text4:#3A3A55;
+  --accent:#7B6BFF;--accent-bg:rgba(123,107,255,0.10);--accent-border:rgba(123,107,255,0.22);
+  --green:#34D399;--green-bg:rgba(52,211,153,0.08);--green-border:rgba(52,211,153,0.20);
+  --amber:#FBBF24;--amber-bg:rgba(251,191,36,0.08);--amber-border:rgba(251,191,36,0.20);
+  --domain-it:#9A8FFF;--domain-int:#7A8FA8;
+  --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 20px rgba(0,0,0,0.20);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.45);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;transition:background var(--tr),color var(--tr)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* LOGIN */
+#login-screen{display:none;position:fixed;inset:0;z-index:1000;background:#3200FA;align-items:center;justify-content:center}
+.lbox{width:100%;max-width:400px;padding:2.5rem;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.lbox-logo{display:flex;justify-content:center;margin-bottom:.6rem}
+.lbox-name{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#0D0D1E;text-align:center}
+.lbox-sub{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text3);letter-spacing:.04em;text-align:center;margin-bottom:1.6rem;margin-top:.2rem}
+.lform{display:flex;flex-direction:column;gap:.65rem}
+.lform label{font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.09em;color:var(--text3)}
+.lform input{font-family:'DM Mono',monospace;font-size:.9rem;padding:.55rem .75rem;border:1.5px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);outline:none;transition:border-color var(--tr)}
+.lform input:focus{border-color:var(--accent)}
+.lform button{font-family:'Sora',sans-serif;font-size:.88rem;font-weight:600;padding:.62rem;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;transition:opacity var(--tr)}
+.lform button:hover{opacity:.88}
+.lform button:disabled{opacity:.5;cursor:not-allowed}
+#login-error{font-family:'DM Mono',monospace;font-size:.7rem;color:#F87171;min-height:.8rem;display:none}
+.lfooter{text-align:center;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text3);margin-top:1.4rem}
+
+/* OVERLAYS */
+#loading-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(247,247,251,.95);align-items:center;justify-content:center;flex-direction:column;gap:1rem}
+[data-theme="dark"] #loading-overlay{background:rgba(8,8,26,.92)}
+.spin{width:26px;height:26px;border:2.5px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+#loading-msg{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text3);letter-spacing:.04em}
+#error-msg{display:none;position:fixed;top:1rem;right:1rem;z-index:998;background:#FFF1F1;border:1px solid rgba(220,38,38,.2);color:#DC2626;padding:.6rem 1rem;border-radius:8px;font-family:'DM Mono',monospace;font-size:.78rem;max-width:340px}
+
+/* APP SHELL */
+#app-screen{display:none}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;transition:width var(--tr);overflow:hidden}
+.sb.col{width:60px}
+.sb-head{padding:16px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);height:56px;flex-shrink:0}
+.lt{overflow:hidden;white-space:nowrap;transition:opacity var(--tr)}
+.sb.col .lt{opacity:0;pointer-events:none}
+.ln{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text)}
+.ls{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:2px}
+.sb-badge{display:block;padding:3px 11px;border-radius:20px;background:var(--accent-bg);color:var(--accent);font-size:9px;font-weight:700;letter-spacing:.05em;margin:8px 12px;width:fit-content;white-space:nowrap;transition:opacity var(--tr)}
+.sb.col .sb-badge{opacity:0}
+.nav{padding:6px 8px;flex:1;overflow-y:auto}
+.nav-s{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:12px 10px 4px;white-space:nowrap;transition:opacity var(--tr)}
+.sb.col .nav-s{opacity:0}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background var(--tr),color var(--tr);color:var(--text2);font-size:13px;font-weight:500;user-select:none;white-space:nowrap;margin-bottom:1px}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.on{background:var(--accent-bg);color:var(--accent);font-weight:600}
+.ni-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:background var(--tr)}
+.ni.on .ni-icon{background:var(--accent);color:#fff}
+.ni-lbl{overflow:hidden;white-space:nowrap;transition:opacity var(--tr)}
+.sb.col .ni-lbl{opacity:0;pointer-events:none}
+.sb-foot{padding:8px 8px 10px;border-top:1px solid var(--border);flex-shrink:0}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2.4s ease-in-out infinite}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border2);padding:0 20px;height:56px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tt{font-size:14px;font-weight:700;letter-spacing:-.02em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt-sub{font-size:11px;color:var(--text3);font-weight:400;margin-left:6px}
+.ib{width:30px;height:30px;border-radius:7px;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tr);color:var(--text2);user-select:none;flex-shrink:0}
+.ib:hover{background:var(--surface2);color:var(--text)}
+.tag-pill{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 9px;border-radius:20px;white-space:nowrap;font-family:'DM Mono',monospace}
+.tag-accent{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)}
+.tag-neutral{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+
+/* ── TAB STRIP (Opzione A) ── */
+.tab-strip{background:var(--surface);border-bottom:1px solid var(--border2);padding:0 20px;display:flex;align-items:center;gap:2px;height:38px;flex-shrink:0}
+.tab-btn{font-family:'Sora',sans-serif;font-size:12px;font-weight:600;padding:0 14px;height:28px;border:1px solid transparent;border-radius:8px;cursor:pointer;background:transparent;color:var(--text3);transition:all var(--tr);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.tab-btn:hover{background:var(--surface2);color:var(--text2)}
+.tab-btn.on{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
+.tab-badge{font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;background:var(--surface3);color:var(--text3);font-family:'DM Mono',monospace}
+.tab-btn.on .tab-badge{background:var(--accent);color:#fff}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+.ch{padding:12px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.ct{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+.csub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* FILTERS */
+.fstrip{padding:10px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--border)}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3)}
+.fsel,.finp{font-family:'DM Mono',monospace;font-size:11px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);padding:5px 9px;border-radius:8px;height:28px;outline:none;transition:border-color var(--tr)}
+.fsel{min-width:132px;cursor:pointer}
+.fsel-lg{min-width:200px}
+.finp{width:64px}
+.finp-text{width:148px}
+.fsel:focus,.finp:focus{border-color:var(--accent)}
+.abtn{font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:0 11px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;border-radius:8px;height:28px;transition:all var(--tr);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.abtn:hover{background:var(--text);color:#fff;border-color:var(--text)}
+.abtn-green{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.abtn-green:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* STATUS BAR */
+.sbar{padding:5px 18px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sbar-count{font-size:10px;font-family:'DM Mono',monospace;color:var(--text2)}
+.sbar-count strong{color:var(--accent);font-weight:600}
+.warn-box{font-size:10px;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-border);padding:2px 8px;border-radius:5px;display:none}
+.skpis{display:flex;gap:22px}
+.skpi{display:flex;flex-direction:column;gap:1px;align-items:flex-end}
+.skpi span{font-size:9px;color:var(--text3);letter-spacing:.03em;font-weight:600;text-transform:uppercase}
+.skpi strong{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text)}
+
+/* COL SELECTOR */
+.csel{padding:5px 18px;display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--border);background:var(--surface)}
+.csel-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;font-weight:700;margin-right:4px}
+.ctg{font-size:10px;font-weight:600;padding:2px 9px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--text3);transition:all .12s;white-space:nowrap;font-family:'Sora',sans-serif}
+.ctg.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ctg:hover:not(.on){background:var(--surface2);color:var(--text)}
+
+/* TABLE */
+.twrap{overflow:auto;max-height:calc(100vh - 340px)}
+table{border-collapse:collapse;width:100%}
+thead{position:sticky;top:0;z-index:10}
+th{background:var(--surface2);color:var(--text3);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border2);border-right:1px solid var(--border);position:relative;font-family:'Sora',sans-serif;transition:background var(--tr),color var(--tr)}
+th:hover{background:var(--surface3);color:var(--text2)}
+th.sa::after{content:' ↑';opacity:.5}
+th.sd::after{content:' ↓';opacity:.5}
+th.gs{border-left:2px solid var(--border2)}
+.tip{display:none;position:absolute;top:calc(100% + 4px);left:0;background:rgba(8,8,26,0.97);backdrop-filter:blur(12px);color:rgba(255,255,255,.88);padding:8px 11px;border-radius:8px;font-size:10px;white-space:normal;width:240px;z-index:500;line-height:1.65;letter-spacing:0;text-transform:none;font-weight:400;box-shadow:0 4px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);font-family:'Sora',sans-serif}
+.tip-ex{margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-size:9px;font-style:italic}
+th:hover .tip{display:block}
+td{padding:9px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);white-space:nowrap;vertical-align:middle;font-size:13px;transition:background var(--tr)}
+tr:hover td{background:var(--surface2)}
+td.gs{border-left:2px solid rgba(50,0,250,0.10)}
+.cn{text-align:right;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text2)}
+.cs{font-weight:600;color:var(--domain-it);font-size:13px}
+.cell-mese{font-family:'DM Mono',monospace;font-size:11px;color:var(--text4)}
+.rk{display:inline-block;min-width:26px;text-align:center;padding:1px 5px;border-radius:5px;font-size:10px;font-weight:700;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-family:'DM Mono',monospace}
+.rk0{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
+.rk1{background:#FEF3C7;border-color:#D97706;color:#92400E}
+.rk2{background:#F3F4F6;border-color:#9CA3AF;color:#374151}
+.rk3{background:#FEF2E7;border-color:#B45309;color:#78350F}
+.lb{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.03em;font-family:'Sora',sans-serif}
+.lb.tot{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)}
+.lb.other{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.nores{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px}
+
+/* NOTA METODOLOGICA */
+.nota-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:4px}
+.nota-sub{font-size:11px;color:var(--text3);margin-bottom:24px;font-family:'DM Mono',monospace}
+.nota-section{margin-bottom:24px}
+.nota-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.nota-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:10px}
+.nota-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
+.nota-card-name{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:'DM Mono',monospace}
+.nota-formula{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);background:var(--green-bg);border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:5px}
+.nota-card-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.nota-card-ex{font-size:11px;color:var(--text3);background:var(--surface2);border-radius:5px;padding:5px 8px;line-height:1.55;font-style:italic}
+.nota-warn{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:12px}
+.nota-warn strong{color:var(--amber)}
+
+/* ── INSIGHTS ─────────────────────────────────────────── */
+.ins-kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.ins-kpi{background:var(--surface2);border-radius:9px;padding:12px 14px}
+.ins-kpi-label{font-size:10px;color:var(--text3);margin-bottom:6px;line-height:1.4}
+.ins-kpi-val{font-size:22px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace;line-height:1}
+.ins-delta{display:block;font-size:10px;margin-top:5px;font-family:'DM Mono',monospace}
+.ins-up{color:var(--green)}.ins-down{color:var(--red)}.ins-neutral{color:var(--text3)}
+.ins-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.ins-leg-sq{width:9px;height:9px;border-radius:2px;flex-shrink:0;display:inline-block}
+/* ── HIDE AIO CLICKERS COLUMN ─────────────────────────── */
+.aio-col-clickers { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="lbox">
+    <div class="lbox-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 228" width="60" height="56">
+        <defs>
+          <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1A00FF"/>
+            <stop offset="50%" stop-color="#3A00FF"/>
+            <stop offset="100%" stop-color="#7A12D8"/>
+          </linearGradient>
+          <mask id="lhole">
+            <rect x="0" y="0" width="246" height="228" fill="white"/>
+            <rect x="122" y="55" width="58" height="60" fill="black"/>
+          </mask>
+        </defs>
+        <rect x="20" y="80" width="150" height="140" fill="url(#lg)" mask="url(#lhole)"/>
+        <rect x="130" y="20" width="100" height="95" fill="url(#lg)" mask="url(#lhole)"/>
+        <rect x="128" y="60" width="46" height="50" fill="url(#lg)"/>
+      </svg>
+    </div>
+    <div class="lbox-name">AI² Audience Impact</div>
+    <div class="lbox-sub">Powered by Sensemakers</div>
+    <form class="lform" id="login-form">
+      <div style="display:flex;flex-direction:column;gap:.2rem">
+        <label data-tl="login_email">Email</label>
+        <input id="login-email" type="email" required autocomplete="email" placeholder="nome@sensemakers.it">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.2rem">
+        <label data-tl="login_pwd">Password</label>
+        <input id="login-password" type="password" required autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <div id="login-error"></div>
+      <button id="login-btn" type="submit">Accedi</button>
+    </form>
+    <p class="lfooter" id="login-footer">Fonte: Comscore Panel IT · Desktop · Marzo 2026</p>
+  </div>
+</div>
+
+<!-- LOADING & ERROR -->
+<div id="loading-overlay"><div class="spin"></div><div id="loading-msg">Caricamento dati…</div></div>
+<div id="error-msg"></div>
+
+<!-- APP -->
+<div id="app-screen">
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sb" id="sb">
+    <div class="sb-head">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 228" width="28" height="26" style="display:block;flex-shrink:0">
+        <defs>
+          <linearGradient id="sbg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1A00FF"/>
+            <stop offset="50%" stop-color="#3A00FF"/>
+            <stop offset="100%" stop-color="#7A12D8"/>
+          </linearGradient>
+          <mask id="shole">
+            <rect x="0" y="0" width="246" height="228" fill="white"/>
+            <rect x="122" y="55" width="58" height="60" fill="black"/>
+          </mask>
+        </defs>
+        <rect x="20" y="80" width="150" height="140" fill="url(#sbg)" mask="url(#shole)"/>
+        <rect x="130" y="20" width="100" height="95" fill="url(#sbg)" mask="url(#shole)"/>
+        <rect x="128" y="60" width="46" height="50" fill="url(#sbg)"/>
+      </svg>
+      <div class="lt">
+        <div class="ln">AI² Audience Impact</div>
+      </div>
+    </div>
+    <div class="sb-badge">Powered by Sensemakers</div>
+    <nav class="nav">
+      <div class="nav-s">Viste</div>
+      <div class="ni on" id="nav-dati" onclick="switchPanel('dati',this)">
+        <div class="ni-icon">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="7" y="1" width="5" height="5" rx="1"/><rect x="1" y="7" width="5" height="5" rx="1"/><rect x="7" y="7" width="5" height="5" rx="1"/></svg>
+        </div>
+        <span class="ni-lbl">Dati</span>
+      </div>
+      <div class="ni" id="nav-insights" onclick="switchPanel('insights',this)">
+        <div class="ni-icon">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><polyline points="1,10 4,6 7,8 10,3 12,5"/></svg>
+        </div>
+        <span class="ni-lbl">Insights</span>
+      </div>
+      <div class="ni" id="nav-insights-aio" onclick="switchPanel('insights-aio',this)">
+        <div class="ni-icon">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="4" cy="9" r="2"/><circle cx="9" cy="4" r="2"/><line x1="5.5" y1="7.5" x2="7.5" y2="5.5"/></svg>
+        </div>
+        <span class="ni-lbl">Competition</span>
+      </div>
+      <div class="ni" id="nav-nota" onclick="switchPanel('nota',this)">
+        <div class="ni-icon">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 3h9M2 6.5h9M2 10h5"/></svg>
+        </div>
+        <span class="ni-lbl">Nota metodologica</span>
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <div style="display:flex;align-items:center;gap:8px;padding:0 10px 8px">
+        <div class="dot"></div>
+        <span id="sb-last-update" class="ni-lbl" style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">Comscore Panel IT</span>
+      </div>
+      <div class="ni" onclick="document.getElementById('sb').classList.toggle('col')" style="color:var(--text3)">
+        <div class="ni-icon">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><polyline points="8,2 3,6.5 8,11"/></svg>
+        </div>
+        <span class="ni-lbl" style="font-size:12px">Comprimi</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <span class="tt" id="ptitle">Dati <span class="tt-sub">| Comscore</span></span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="tag-pill tag-accent">Italia</span>
+        <span id="user-email" style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace"></span>
+        <div class="ib" onclick="toggleTheme()" title="Tema">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 1.5a5 5 0 1 0 5 5 5 5 0 0 0-5-5z" clip-path="inset(0 50% 0 0)"/><circle cx="6.5" cy="6.5" r="5"/></svg>
+        </div>
+        <div class="ib" onclick="handleLogout()" title="Esci">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 9l3-2.5L8.5 4"/><line x1="11.5" y1="6.5" x2="5" y2="6.5"/><path d="M5 10.5H2V2.5h3"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- TAB STRIP -->
+    <div class="tab-strip" id="tab-strip-dati" style="display:none">
+      <button class="tab-btn on" id="tab-chatbot" onclick="switchTab('chatbot',this)">
+        AI Chatbot
+      </button>
+      <button class="tab-btn" id="tab-cocitation" onclick="switchTab('cocitation',this)">
+        AI Co-citation
+      </button>
+      <button class="tab-btn" id="tab-aio" onclick="switchTab('aio',this)">
+        AI Overview
+      </button>
+    </div>
+
+    <!-- ══ PANEL DATI ══ -->
+    <div id="panel-dati" class="content" style="display:none;animation:fu .18s ease both">
+
+      <!-- ── SUB-PANEL AI CHATBOT ── -->
+      <div id="subpanel-chatbot" class="card">
+        <div class="ch">
+          <div>
+            <div class="ct" id="card-title">Domini — AI Chatbot</div>
+            <div class="csub" id="card-sub">Caricamento in corso…</div>
+          </div>
+        </div>
+        <div class="fstrip">
+          <div class="fg">
+            <div class="fl" data-tl="fl_mese">Mese</div>
+            <select id="f-mese" class="fsel" onchange="applyFilters()">
+              <option value="">Tutti</option>
+              <option value="Dec-25">Dic 2025</option>
+              <option value="Jan-26">Gen 2026</option>
+              <option value="Feb-26">Feb 2026</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl" data-tl="fl_chatbot">Chatbot</div>
+            <select id="f-llm" class="fsel" onchange="applyFilters()">
+              <option value="Total">Total — aggregato tutti</option>
+              <option value="OPENAI CHATGPT">ChatGPT</option>
+              <option value="PERPLEXITY">Perplexity ⚠</option>
+              <option value="GOOGLE GEMINI">Gemini ⚠</option>
+              <option value="MICROSOFT COPILOT">Copilot ⚠</option>
+              <option value="X GROK">Grok ⚠</option>
+              <option value="__ALL__">Tutti i chatbot ⚠</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl" data-tl="fl_cerca">Cerca domain</div>
+            <input type="text" id="f-sito" class="finp finp-text" placeholder="es: corriere, ansa, sky…" title="Separa più domini con virgola per ricerca multipla (OR)" oninput="applyFilters()">
+          </div>
+          <div class="fg">
+            <div class="fl" data-tl="fl_posmin">Posiz. min</div>
+            <input type="number" id="f-rk-min" class="finp" placeholder="1" min="1" oninput="applyFilters()">
+          </div>
+          <div class="fg">
+            <div class="fl" data-tl="fl_posmax">Posiz. max</div>
+            <input type="number" id="f-rk-max" class="finp" placeholder="375" min="1" oninput="applyFilters()">
+          </div>
+          <div class="fg">
+            <div class="fl" data-tl="fl_esposti">AI Visitors ≥</div>
+            <input type="number" id="f-vis" class="finp" placeholder="0" min="0" oninput="applyFilters()">
+          </div>
+          <div class="fg">
+            <div class="fl">Domain Category</div>
+            <select id="f-cat" class="fsel fsel-lg" onchange="applyFilters()">
+              <option value="">Tutte le categorie</option>
+              <option value="Automotive">Automotive</option>
+              <option value="Business to Business">Business to Business</option>
+              <option value="Career Services and Development">Career Services and Development</option>
+              <option value="Corporate Presence">Corporate Presence</option>
+              <option value="Directories/Resources">Directories/Resources</option>
+              <option value="Education">Education</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Family &amp; Youth">Family &amp; Youth</option>
+              <option value="Financial Services">Financial Services</option>
+              <option value="Games">Games</option>
+              <option value="Government">Government</option>
+              <option value="Health">Health</option>
+              <option value="ISP">ISP</option>
+              <option value="Lifestyles">Lifestyles</option>
+              <option value="Media">Media</option>
+              <option value="Multi-Category">Multi-Category</option>
+              <option value="News/Information">News/Information</option>
+              <option value="Promotional Servers">Promotional Servers</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Retail">Retail</option>
+              <option value="Search/Navigation">Search/Navigation</option>
+              <option value="Services">Services</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Sports">Sports</option>
+              <option value="Technology">Technology</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Travel">Travel</option>
+              <option value="Uncategorized">Uncategorized</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Geo</div>
+            <select id="f-geo" class="fsel" onchange="applyFilters()">
+              <option value="">Tutti</option>
+              <option value="ITA">ITA</option>
+              <option value="INT">INT</option>
+            </select>
+          </div>
+                    <div class="fg" style="margin-left:auto;justify-content:flex-end">
+            <div class="fl">&nbsp;</div>
+            <div style="display:flex;gap:5px">
+              <button class="abtn" onclick="resetFilters()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 2.5A4 4 0 1 0 10 6"/><polyline points="10,1 10,4 7,4"/></svg>
+                Reset
+              </button>
+              <button class="abtn abtn-green" onclick="exportExcel()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="5.5" y1="1" x2="5.5" y2="7.5"/><polyline points="2,5 5.5,8.5 9,5"/><line x1="1" y1="10" x2="10" y2="10"/></svg>
+                Excel
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sbar">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="sbar-count"><strong id="cnt-s">—</strong> <span id="sb-su">domini su</span> <strong id="cnt-t">—</strong></div>
+            <div class="warn-box" id="warn-ovlp">⚠ Modalità "tutti i chatbot": selezionare "Total" per confronti corretti.</div>
+          </div>
+          <div class="csel" style="border:none;padding:0;background:transparent">
+            <span class="csel-lbl">Colonne:</span>
+            <button class="ctg on" data-g="g-id" data-cg="cg_id" onclick="togG(this)">Identificatori</button>
+            <button class="ctg on" data-g="g-vol" data-cg="cg_vol" onclick="togG(this)">Volumi</button>
+            <button class="ctg on" data-g="g-pct" data-cg="cg_pct" onclick="togG(this)">Indicatori %</button>
+            <button class="ctg on" data-g="g-eng" data-cg="cg_eng" onclick="togG(this)">Engagement</button>
+          </div>
+        </div>
+        <div class="twrap">
+          <table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table>
+          <div id="nores" class="nores" style="display:none">Nessun risultato. Modifica i filtri per espandere la selezione.</div>
+        </div>
+      </div>
+
+      <!-- ── SUB-PANEL AI CO-CITATION ── -->
+      <div id="subpanel-cocitation" class="card" style="display:none">
+        <div class="ch">
+          <div>
+            <div class="ct" id="cc-card-title">AI Co-citation</div>
+            <div class="csub" id="cc-card-sub">Caricamento in corso…</div>
+          </div>
+        </div>
+        <div class="fstrip">
+          <div class="fg">
+            <div class="fl">Mese</div>
+            <select id="cc-f-mese" class="fsel" onchange="applyFiltersCc()">
+              <option value="">Tutti</option>
+              <option value="Dec-25">Dic 2025</option>
+              <option value="Jan-26">Gen 2026</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Chatbot</div>
+            <select id="cc-f-chatbot" class="fsel" onchange="applyFiltersCc()">
+              <option value="Total">Total — aggregato tutti</option>
+              <option value="OPENAI CHATGPT">ChatGPT</option>
+              <option value="PERPLEXITY">Perplexity ⚠</option>
+              <option value="GOOGLE GEMINI">Gemini ⚠</option>
+              <option value="MICROSOFT COPILOT">Copilot ⚠</option>
+              <option value="X GROK">Grok ⚠</option>
+              <option value="__ALL__">Tutti i chatbot ⚠</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Cerca domain</div>
+            <input type="text" id="cc-f-domain" class="finp finp-text" placeholder="es: corriere, ansa…" title="Separa più domini con virgola per ricerca multipla (OR)" oninput="applyFiltersCc()">
+          </div>
+          <div class="fg">
+            <div class="fl">Cerca co-cited</div>
+            <input type="text" id="cc-f-cocited" class="finp finp-text" placeholder="es: wikipedia, reddit…" title="Separa più domini con virgola per ricerca multipla (OR)" oninput="applyFiltersCc()">
+          </div>
+          <div class="fg">
+            <div class="fl">AI Visitors ≥</div>
+            <input type="number" id="cc-f-vis" class="finp" placeholder="0" min="0" oninput="applyFiltersCc()">
+          </div>
+          <div class="fg">
+            <div class="fl">Mostra self-citation</div>
+            <select id="cc-f-self" class="fsel" onchange="applyFiltersCc()">
+              <option value="all">Tutti</option>
+              <option value="no_self">Nascondi self</option>
+              <option value="only_self">Solo self</option>
+            </select>
+          </div>
+          <div class="fg" style="margin-left:auto;justify-content:flex-end">
+            <div class="fl">&nbsp;</div>
+            <div style="display:flex;gap:5px">
+              <button class="abtn" onclick="resetFiltersCc()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 2.5A4 4 0 1 0 10 6"/><polyline points="10,1 10,4 7,4"/></svg>
+                Reset
+              </button>
+              <button class="abtn abtn-green" onclick="exportExcelCc()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="5.5" y1="1" x2="5.5" y2="7.5"/><polyline points="2,5 5.5,8.5 9,5"/><line x1="1" y1="10" x2="10" y2="10"/></svg>
+                Excel
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sbar">
+          <div class="sbar-count"><strong id="cc-cnt-s">—</strong> <span>righe su</span> <strong id="cc-cnt-t">—</strong></div>
+          <div class="csel" style="border:none;padding:0;background:transparent">
+            <span class="csel-lbl">Colonne:</span>
+            <button class="ctg on" data-g="cc-g-id" onclick="togGCc(this)">Identificatori</button>
+            <button class="ctg on" data-g="cc-g-vol" onclick="togGCc(this)">Volumi</button>
+            <button class="ctg on" data-g="cc-g-pct" onclick="togGCc(this)">Indicatori %</button>
+          </div>
+        </div>
+        <div class="twrap">
+          <table><thead><tr id="cc-thead-row"></tr></thead><tbody id="cc-tbody"></tbody></table>
+          <div id="cc-nores" class="nores" style="display:none">Nessun risultato. Modifica i filtri.</div>
+        </div>
+      </div>
+
+      <!-- ── SUB-PANEL AIO ── -->
+      <div id="subpanel-aio" class="card" style="display:none">
+        <div class="ch">
+          <div>
+            <div class="ct" id="aio-card-title">Domini — AIO</div>
+            <div class="csub" id="aio-card-sub">Caricamento in corso…</div>
+          </div>
+        </div>
+        <div class="fstrip">
+          <div class="fg">
+            <div class="fl">Mese</div>
+            <select id="aio-f-mese" class="fsel" onchange="applyFiltersAio()">
+              <option value="">Tutti</option>
+              <option value="25-Apr">Apr 2025</option>
+              <option value="25-May">Mag 2025</option>
+              <option value="25-Jun">Giu 2025</option>
+              <option value="25-Jul">Lug 2025</option>
+              <option value="25-Aug">Ago 2025</option>
+              <option value="25-Sep">Set 2025</option>
+              <option value="25-Oct">Ott 2025</option>
+              <option value="25-Nov">Nov 2025</option>
+              <option value="25-Dec">Dic 2025</option>
+              <option value="26-Jan">Gen 2026</option>
+              <option value="26-Feb">Feb 2026</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Search Engine</div>
+            <select id="aio-f-se" class="fsel" onchange="applyFiltersAio()">
+              <option value="TOTAL">Totale</option>
+              <option value="google.com">Google</option>
+              <option value="bing.com">Bing</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Search Category</div>
+            <select id="aio-f-cat" class="fsel fsel-lg" onchange="applyFiltersAio()">
+              <option value="">Tutte le categorie</option>
+              <option value="Automotive">Automotive</option>
+              <option value="Business to Business">Business to Business</option>
+              <option value="Career Services and Development">Career Services and Development</option>
+              <option value="Directories/Resources">Directories/Resources</option>
+              <option value="Education">Education</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Family &amp; Youth">Family &amp; Youth</option>
+              <option value="Financial Services">Financial Services</option>
+              <option value="Gambling">Gambling</option>
+              <option value="Games">Games</option>
+              <option value="Government">Government</option>
+              <option value="Health">Health</option>
+              <option value="ISP">ISP</option>
+              <option value="Lifestyles">Lifestyles</option>
+              <option value="Multi-Category">Multi-Category</option>
+              <option value="News/Information">News/Information</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Retail">Retail</option>
+              <option value="Services">Services</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Sports">Sports</option>
+              <option value="Technology">Technology</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="TOTAL">TOTAL — aggregato categorie</option>
+              <option value="Travel">Travel</option>
+              <option value="Uncategorized">Uncategorized</option>
+              <option value="XXX Adult">XXX Adult</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Cerca domain</div>
+            <input type="text" id="aio-f-sito" class="finp finp-text" placeholder="es: reddit, ansa, google…" title="Separa più domini con virgola per ricerca multipla (OR)" oninput="applyFiltersAio()">
+          </div>
+          <div class="fg">
+            <div class="fl">Rank min</div>
+            <input type="number" id="aio-f-rk-min" class="finp" placeholder="0" min="0" oninput="applyFiltersAio()">
+          </div>
+          <div class="fg">
+            <div class="fl">Rank max</div>
+            <input type="number" id="aio-f-rk-max" class="finp" placeholder="51" min="0" oninput="applyFiltersAio()">
+          </div>
+          <div class="fg">
+            <div class="fl">Searchers ≥</div>
+            <input type="number" id="aio-f-srch" class="finp" placeholder="0" min="0" oninput="applyFiltersAio()">
+          </div>
+          <div class="fg">
+            <div class="fl">Mostra aggregati</div>
+            <select id="aio-f-agg" class="fsel" onchange="applyFiltersAio()">
+              <option value="all">Tutti</option>
+              <option value="only_domains">Solo domini</option>
+              <option value="only_agg">Solo aggregati</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Domain Category</div>
+            <select id="aio-f-cat-domain" class="fsel fsel-lg" onchange="applyFiltersAio()">
+              <option value="">Tutte le categorie</option>
+              <option value="Automotive">Automotive</option>
+              <option value="Business to Business">Business to Business</option>
+              <option value="Career Services and Development">Career Services and Development</option>
+              <option value="Corporate Presence">Corporate Presence</option>
+              <option value="Directories/Resources">Directories/Resources</option>
+              <option value="Education">Education</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Family &amp; Youth">Family &amp; Youth</option>
+              <option value="Financial Services">Financial Services</option>
+              <option value="Games">Games</option>
+              <option value="Government">Government</option>
+              <option value="Health">Health</option>
+              <option value="ISP">ISP</option>
+              <option value="Lifestyles">Lifestyles</option>
+              <option value="Media">Media</option>
+              <option value="Multi-Category">Multi-Category</option>
+              <option value="News/Information">News/Information</option>
+              <option value="Promotional Servers">Promotional Servers</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Retail">Retail</option>
+              <option value="Search/Navigation">Search/Navigation</option>
+              <option value="Services">Services</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Sports">Sports</option>
+              <option value="Technology">Technology</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Travel">Travel</option>
+              <option value="Uncategorized">Uncategorized</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Geo</div>
+            <select id="aio-f-geo" class="fsel" onchange="applyFiltersAio()">
+              <option value="">Tutti</option>
+              <option value="ITA">ITA</option>
+              <option value="INT">INT</option>
+            </select>
+          </div>
+                    <div class="fg" style="margin-left:auto;justify-content:flex-end">
+            <div class="fl">&nbsp;</div>
+            <div style="display:flex;gap:5px">
+              <button class="abtn" onclick="resetFiltersAio()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 2.5A4 4 0 1 0 10 6"/><polyline points="10,1 10,4 7,4"/></svg>
+                Reset
+              </button>
+              <button class="abtn abtn-green" onclick="exportExcelAio()">
+                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="5.5" y1="1" x2="5.5" y2="7.5"/><polyline points="2,5 5.5,8.5 9,5"/><line x1="1" y1="10" x2="10" y2="10"/></svg>
+                Excel
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sbar">
+          <div class="sbar-count"><strong id="aio-cnt-s">—</strong> <span>domini su</span> <strong id="aio-cnt-t">—</strong></div>
+          <div class="csel" style="border:none;padding:0;background:transparent">
+            <span class="csel-lbl">Colonne:</span>
+            <button class="ctg on" data-g="aio-g-id" onclick="togGAio(this)">Identificatori</button>
+            <button class="ctg on" data-g="aio-g-vol" onclick="togGAio(this)">Volumi</button>
+            <button class="ctg on" data-g="aio-g-pct" onclick="togGAio(this)">Indicatori %</button>
+          </div>
+        </div>
+        <div class="twrap">
+          <table><thead><tr id="aio-thead-row"></tr></thead><tbody id="aio-tbody"></tbody></table>
+          <div id="aio-nores" class="nores" style="display:none">Nessun risultato. Modifica i filtri.</div>
+        </div>
+      </div>
+
+    </div><!-- /panel-dati -->
+
+    <!-- ══ PANEL NOTA ══ -->
+    <div id="panel-nota" class="content" style="display:none;animation:fu .18s ease both">
+      <div class="card">
+        <div class="ch">
+          <div>
+            <div class="ct nota-title">Nota metodologica</div>
+            <div class="csub nota-sub">Come sono costruiti i dati, cosa misurano le metriche e come interpretarle correttamente.</div>
+          </div>
+        </div>
+        <div style="padding:18px 18px 24px">
+          <div id="nota-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL INSIGHTS ══ -->
+    <div id="panel-insights" class="content" style="display:none;animation:fu .18s ease both">
+      <div class="card">
+        <div class="ch" style="flex-wrap:wrap;gap:10px">
+          <div>
+            <div class="ct" id="ins-card-title">AI Chatbot</div>
+            <div class="csub" id="ins-card-sub">Caricamento in corso…</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="fg">
+              <div class="fl">Mese</div>
+              <select id="ins-f-mese" class="fsel" onchange="insightsOnMeseChange()"></select>
+            </div>
+            <div class="fg">
+              <div class="fl">Chatbot</div>
+              <select id="ins-f-llm" class="fsel" onchange="insightsOnLlmChange()">
+                <option value="Total">Total — aggregato tutti</option>
+                <option value="OPENAI CHATGPT">ChatGPT</option>
+                <option value="PERPLEXITY">Perplexity ⚠</option>
+                <option value="GOOGLE GEMINI">Gemini ⚠</option>
+                <option value="MICROSOFT COPILOT">Copilot ⚠</option>
+                <option value="X GROK">Grok ⚠</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 18px 0">
+          <div id="ins-kpi-container" class="ins-kpi-row"></div>
+        </div>
+        <div style="padding:0 18px 14px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">Top siti per AI Visitors</div>
+                <div class="csub" id="ins-chart1-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div style="position:relative;width:100%;height:340px">
+                <canvas id="ins-chart1"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">Total New Reach per dominio</div>
+                <div class="csub" id="ins-chart2-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:9px;height:9px;border-radius:2px;background:#534AB7;display:inline-block"></span>Domain Visitors</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block"></span>Non Visitors</span>
+              </div>
+              <div style="position:relative;width:100%;height:300px">
+                <canvas id="ins-chart2"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 18px 18px">
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">AI Visitors · evoluzione mensile</div>
+                <div class="csub" id="ins-chart3-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div id="ins-chart3-legend" style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap"></div>
+              <div style="position:relative;width:100%;height:220px">
+                <canvas id="ins-chart3"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL INSIGHTS AIO ══ -->
+    <div id="panel-insights-aio" class="content" style="display:none;animation:fu .18s ease both">
+      <div class="card">
+        <div class="ch" style="flex-wrap:wrap;gap:10px">
+          <div>
+            <div class="ct" id="aio-ins-card-title">Competition · AI Overview</div>
+            <div class="csub" id="aio-ins-card-sub">Caricamento in corso…</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="fg">
+              <div class="fl">Domain Category</div>
+              <select id="aio-ins-f-cat" class="fsel" onchange="aioOnCatChange()">
+                <option value="">Tutte le categorie</option>
+              </select>
+            </div>
+            <div class="fg">
+              <div class="fl">Metrica</div>
+              <select id="aio-f-metric" class="fsel" onchange="aioOnMetricChange()">
+                <option value="searchers">Searchers</option>
+                <option value="pct_conv_clk">% Conv. Clickers</option>
+                <option value="pct_ctd_clk">% Conv. To Domain (Clickers)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="padding:12px 18px 0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);flex-shrink:0">Domini</span>
+            <div id="aio-domain-chips" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"></div>
+          </div>
+        </div>
+        <div style="padding:12px 18px 0">
+          <div id="aio-kpi-container" class="ins-kpi-row"></div>
+        </div>
+        <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">Andamento nel tempo</div>
+                <div class="csub" id="aio-chart1-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div id="aio-chart1-legend" style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap"></div>
+              <div style="position:relative;width:100%;height:220px">
+                <canvas id="aio-chart1"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">% Conv. To Domain (Clickers)</div>
+                <div class="csub" id="aio-chart2-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div id="aio-chart2-legend" style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap"></div>
+              <div style="position:relative;width:100%;height:220px">
+                <canvas id="aio-chart2"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 18px 18px">
+          <div class="card" style="border:0.5px solid var(--border)">
+            <div class="ch" style="border-bottom:0.5px solid var(--border)">
+              <div>
+                <div class="ct">Searchers per categoria</div>
+                <div class="csub" id="aio-chart3-sub"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div id="aio-chart3-legend" style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap"></div>
+              <div style="position:relative;width:100%;height:280px">
+                <canvas id="aio-chart3"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+</div><!-- /app-screen -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="lang.js"></script>
+<script src="app.js"></script>
+<script src="insights.js"></script>
+<script src="insights_aio.js"></script>
+</body>
+</html>
