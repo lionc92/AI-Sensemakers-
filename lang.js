@@ -489,14 +489,14 @@ COLS_AIO.push(
     tip: 'Persone uniche che hanno cliccato su almeno un risultato nell\'AI Overview.<span class="tip-ex">Può essere NULL se Comscore non riporta il dato (sotto soglia).</span>' },
   { label: 'Clickers to Domain', dk: 'clickers_to_domain', dt: 'n', grp: 'aio-g-vol',
     tip: 'Persone uniche che hanno cliccato direttamente sul dominio citato nell\'AI Overview.<span class="tip-ex">Frequentemente NULL — molti domini vengono citati senza generare click diretti.</span>' },
-  { label: 'Clicks to Domain',    dk: 'clicks_to_domain', dt: 'n', grp: 'aio-g-vol',
-    tip: 'Numero totale di click - inclusa la SERP -  diretti verso il dominio citato nell\'AI Overview.<span class="tip-ex">Frequentemente NULL — molti domini vengono citati senza generare click diretti.</span>' },
-  { label: '% Conv. Clickers',   dk: 'pct_conv_clk',  dt: 'n', grp: 'aio-g-pct gs',
-    tip: 'Clickers ÷ Searchers. Percentuale di ricercatori che hanno cliccato su un risultato AI Overview o SERP Google.<span class="tip-ex">Es: 60% → 60 persone su 100 che hanno cercato hanno cliccato su un risultato.</span>' },
-  { label: '% Conv. To Domain (Clicks)', dk: 'pct_ctd_srch', dt: 'n', grp: 'aio-g-pct',
-    tip: 'Clicks to Domain ÷ Searches. Tasso di click diretti al dominio sul totale delle ricerche.' },
   { label: '% Conv. To Domain (Clickers)', dk: 'pct_ctd_clk',  dt: 'n', grp: 'aio-g-pct',
     tip: 'Clickers to Domain ÷ Searchers. Percentuale di ricercatori che hanno cliccato direttamente sul dominio.<span class="tip-ex">Es: 18% su motor1.com → 18 persone su 100 hanno cliccato su motor1.com dall\'AI Overview o SERP.</span>' },
+  { label: 'Clicks to Domain',    dk: 'clicks_to_domain', dt: 'n', grp: 'aio-g-vol',
+    tip: 'Numero totale di click - inclusa la SERP -  diretti verso il dominio citato nell\'AI Overview.<span class="tip-ex">Frequentemente NULL — molti domini vengono citati senza generare click diretti.</span>' },
+  { label: '% Conv. To Domain (Clicks)', dk: 'pct_ctd_srch', dt: 'n', grp: 'aio-g-pct',
+    tip: 'Clicks to Domain ÷ Searches. Tasso di click diretti al dominio sul totale delle ricerche.' },
+  { label: '% Conv. Clickers',   dk: 'pct_conv_clk',  dt: 'n', grp: 'aio-g-pct gs aio-col-clickers',
+    tip: 'Clickers ÷ Searchers. Percentuale di ricercatori che hanno cliccato su un risultato AI Overview o SERP Google.<span class="tip-ex">Es: 60% → 60 persone su 100 che hanno cercato hanno cliccato su un risultato.</span>' },
 );
 
 // Aggiorna rebuildHeadersAio (usata da app.js)
